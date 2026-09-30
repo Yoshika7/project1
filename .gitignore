@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+venv/
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+.vite/
+
+# System and logs
+.DS_Store
+Thumbs.db
+*.log
+powershell.cmd
