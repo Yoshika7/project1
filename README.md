@@ -13,20 +13,25 @@
 
 ## Table of Contents
 1. [Problem Statement](#1-problem-statement)
-2. [Solution Overview](#2-solution-overview)
-3. [System Architecture](#3-system-architecture)
-4. [Genetic Algorithm Formulation](#4-genetic-algorithm-formulation)
-5. [Pure Python Mamdani Fuzzy Inference Engine](#5-pure-python-mamdani-fuzzy-inference-engine)
-6. [Multi-Objective Fitness Evaluation](#6-multi-objective-fitness-evaluation)
-7. [Disruption Dynamics & Recovery](#7-disruption-dynamics--recovery)
-8. [Baseline GA vs AdaptIQ-R Comparison](#8-baseline-ga-vs-adaptiq-r-comparison)
-9. [Performance Metrics & Diagnostics](#9-performance-metrics--diagnostics)
-10. [Installation & Prerequisites](#10-installation--prerequisites)
-11. [Running the Backend API](#11-running-the-backend-api)
-12. [Running the Frontend Dashboard](#12-running-the-frontend-dashboard)
-13. [Running Reproducible Experiments & Benchmarks](#13-running-reproducible-experiments--benchmarks)
-14. [Scientific Reproducibility Guarantees](#14-scientific-reproducibility-guarantees)
-15. [Current Limitations & Research Roadmap](#15-current-limitations--research-roadmap)
+2. [UN SDG Alignment](#2-un-sdg-alignment)
+3. [Solution Overview](#3-solution-overview)
+4. [System Architecture](#4-system-architecture)
+5. [Genetic Algorithm Formulation](#5-genetic-algorithm-formulation)
+6. [Pure Python Mamdani Fuzzy Inference Engine](#6-pure-python-mamdani-fuzzy-inference-engine)
+7. [Multi-Objective Fitness Evaluation](#7-multi-objective-fitness-evaluation)
+8. [Disruption Dynamics & Recovery](#8-disruption-dynamics--recovery)
+9. [Baseline GA vs AdaptIQ-R Comparison](#9-baseline-ga-vs-adaptiq-r-comparison)
+10. [REST API Reference](#10-rest-api-reference)
+11. [Performance Metrics & Diagnostics](#11-performance-metrics--diagnostics)
+12. [Installation & Prerequisites](#12-installation--prerequisites)
+13. [Running the Backend API](#13-running-the-backend-api)
+14. [Running the Frontend Dashboard](#14-running-the-frontend-dashboard)
+15. [Running Reproducible Experiments & Benchmarks](#15-running-reproducible-experiments--benchmarks)
+16. [Scientific Reproducibility Guarantees](#16-scientific-reproducibility-guarantees)
+17. [Track Innovations](#17-track-innovations)
+18. [Current Limitations & Research Roadmap](#18-current-limitations--research-roadmap)
+
+
 
 ---
 
@@ -40,7 +45,22 @@ Re-running full global optimization from scratch incurs high latency, discards v
 
 **AdaptIQ-R** addresses this challenge by introducing an online feedback-controlled evolutionary framework where a **Mamdani Fuzzy Inference System** dynamically adapts genetic operators in response to population state and real-time environmental disruption telemetry.
 
+> 📄 See the full formal problem specification: [PROBLEM_STATEMENT.md](PROBLEM_STATEMENT.md)
+
 ---
+
+## 2. UN SDG Alignment
+
+AdaptIQ-R directly contributes to four United Nations Sustainable Development Goals:
+
+| SDG | Goal | AdaptIQ-R Contribution |
+|:----|:-----|:----------------------|
+| 🏙️ **SDG 11** | Sustainable Cities and Communities | Optimal adaptive routing reduces urban fleet emissions and congestion |
+| 🌍 **SDG 13** | Climate Action | Minimising total route distance reduces vehicle CO₂ output per delivery |
+| 🏗️ **SDG 9** | Industry, Innovation and Infrastructure | Disruption recovery ensures supply-chain continuity under infrastructure failures |
+| 💊 **SDG 3** | Good Health and Well-Being | Priority-aware routing guarantees high-urgency deliveries (medical, food) reach recipients first |
+
+
 
 ## 2. Solution Overview
 
@@ -299,9 +319,60 @@ python -m pytest tests/ -v
 
 ---
 
-## 15. Current Limitations & Research Roadmap
+## 18. Current Limitations & Research Roadmap
 
 * **Single-Depot Architecture**: Current formulation models single-depot routing. Future work includes multi-depot and heterogeneous vehicle fleets.
 * **Time Windows (VRPTW)**: Next iterations will introduce strict customer time-window constraints into the fuzzy penalty calculation.
 * **Type-2 Fuzzy Inference**: Exploring Interval Type-2 Fuzzy Logic to handle uncertainty in disruption sensor noise.
 * **Large-Scale Hierarchical Graphs**: Adding clustering pre-processors for networks exceeding 500 nodes.
+
+---
+
+## REST API Reference
+
+Base URL: `http://localhost:8000`
+
+| Method | Endpoint | Description |
+|:-------|:---------|:------------|
+| `POST` | `/api/scenario/generate` | Generate a synthetic road network scenario |
+| `GET` | `/api/scenario/{id}` | Retrieve a specific scenario by ID |
+| `POST` | `/api/optimize/start` | Start an optimization run (returns run_id) |
+| `GET` | `/api/optimize/{run_id}/status` | Poll current optimization status and latest metrics |
+| `POST` | `/api/optimize/{run_id}/step` | Execute a single GA generation step |
+| `POST` | `/api/disrupt/{run_id}/block` | Apply a road block disruption |
+| `POST` | `/api/disrupt/{run_id}/surge` | Apply a traffic surge disruption |
+| `POST` | `/api/disrupt/{run_id}/vehicle` | Simulate a vehicle failure |
+| `GET` | `/api/benchmark/run` | Run the full multi-seed benchmark suite |
+| `GET` | `/health` | Health check endpoint |
+
+Interactive documentation:
+- **Swagger UI**: `http://localhost:8000/docs`
+- **ReDoc**: `http://localhost:8000/redoc`
+
+---
+
+## Track Innovations
+
+AdaptIQ-R contributes 6 novel technical innovations at the intersection of computational intelligence, evolutionary computation, and dynamic logistics optimisation.
+
+**Key highlights:**
+1. **Online Mamdani FIS for VRP** — First coupling of Mamdani fuzzy adaptation to dynamic VRP disruption recovery in open literature
+2. **Disruption Severity as FIS Input** — Domain-specific telemetry enables proactive (not reactive) adaptation
+3. **Exploration-Scaled Tournament Pressure** — Coordinated mutation + selection pressure via a single FIS output
+4. **Adaptive Multi-Swap Mutation** — Structural magnitude adaptation vs probability-only classical approaches
+5. **Infeasibility-Tolerant Fitness** — Preserves genetic diversity during severe disruption recovery
+6. **Zero-Dependency Pure Python FIS** — Full mathematical transparency, no scikit-fuzzy or MATLAB dependency
+
+> 📄 Full innovation details with mathematical formulation and prior-work comparison: [INNOVATIONS.md](INNOVATIONS.md)
+
+---
+
+## Supporting Documentation
+
+| Document | Purpose |
+|:---------|:--------|
+| [PROBLEM_STATEMENT.md](PROBLEM_STATEMENT.md) | Formal problem definition, inputs/outputs, SDG alignment, failure analysis |
+| [INNOVATIONS.md](INNOVATIONS.md) | 6 novel contributions with math, novelty justification, prior-work comparison |
+| [AdaptIQ_R_Research_Notebook.ipynb](AdaptIQ_R_Research_Notebook.ipynb) | Self-contained Jupyter research notebook |
+| [streamlit_app.py](streamlit_app.py) | Interactive Streamlit web demo |
+
